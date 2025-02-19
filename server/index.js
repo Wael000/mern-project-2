@@ -1,0 +1,56 @@
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import User from './models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+
+const app = express();
+
+app.use(express.json());
+app.use(cors({credentials: true, origin: "http://localhost:5173"}));
+app.use(cookieParser());
+
+app.post('/register', (req, res) => {
+    const { name, email, password } = req.body;
+    const newUser = new User({ name, email, password: bcrypt.hashSync(password, 10) });
+    newUser.save();
+    res.json(newUser);
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (user && bcrypt.compareSync(password, user.password)) {
+        // res.json({ message: 'Login successful' });
+        jwt.sign({ email, id: user._id}, 'secret', {}, (err, token) => {
+            res.cookie("token", token).json({message: "Login succesful"})
+        });
+    } else {
+        res.status(400).json({ message: 'Login failed' });
+    }
+});
+
+app.get("/profile", (req, res) => {
+    jwt.verify(req.cookies.token, 'secret', (err, data) => {
+        if (err) {
+            res.status(400).json({ message: 'Not authorized' });
+        } else {
+            res.json(data);
+        }
+    });
+})
+
+app.post('/logout', (req, res) => {
+    res.clearCookie('token').json({ message: 'Logged out' });
+});
+
+mongoose.connect("mongodb+srv://Mzyxttt:hi1xAh7Q9IWP3Ytp@cluster0.3cz9i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+.then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+        }
+    );
+    })
