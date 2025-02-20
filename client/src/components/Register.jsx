@@ -24,7 +24,7 @@ const Register = () => {
           setUser(data)
           navigate("/")
         } else {
-          alert("Wrong credentials!")
+          alert("Registration failed!")
         }
     }
 

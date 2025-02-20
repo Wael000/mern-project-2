@@ -14,12 +14,18 @@ const NavBar = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3000/profile', 
+    const checkUser = async () => {
+    const response = await fetch('http://localhost:3000/profile', 
     {
       method: 'GET',
       credentials: 'include',
-    }).then(response => response.json())
-    .then(data => setUser(data))
+    })
+    if (response.ok) {
+      const data = await response.json()
+      setUser(data)
+    }
+  }
+  checkUser()
   }, [])
 
   return (
