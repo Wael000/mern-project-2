@@ -9,14 +9,6 @@ import multer from 'multer';
 import Post from './models/Posts.js';
 
 const app = express();
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/');
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, Date.now() + path.extname(file.originalname));
-//     }
-// });
 const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
@@ -75,6 +67,11 @@ app.post('/create', upload.single('file'), async (req, res) => {
     });
     await newPost.save();
     res.status(201).json({ message: 'Post created' });
+});
+
+app.get('/posts', async (req, res) => {
+    const posts = await Post.find();
+    res.json(posts);
 });
 
 mongoose.connect("mongodb+srv://Mzyxttt:hi1xAh7Q9IWP3Ytp@cluster0.3cz9i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")

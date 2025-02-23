@@ -1,19 +1,20 @@
 import React from 'react'
+import { useEffect, useState } from 'react'
+import Post from './Post'
 
 const Posts = () => {
+  const [posts, setPosts] = useState([])
+
+  useEffect(() => {
+    fetch('http://localhost:3000/posts')
+      .then(res => res.json())
+      .then(data => setPosts(data))
+  }, [])
+
   return (
     <div className="container-b">
-    <div className="container-ba">
-      <img src="https://www.autoblog.com/.image/c_limit%2Ccs_srgb%2Cq_auto:good%2Cw_700/MjEyMDI3NTQ2MjM2MTY4MTY4/tesla-model-y-juniper.webp"></img>
-      <div className='container-baa'>
-        <h1>Is the 2025 Tesla Model Y worth $46,490?</h1>
-        <div className="container-baaa">
-          <p>If any Tesla has become ubiquitous, it’s the Model Y, the company’s most affordable SUV. Boasting a spacious cabin and enough range to make it an easy choice as a daily driver, the Model Y benefits from the company’s constant over-the-air updates aimed at making the car better than when you first bought it.</p>
-          <p>Larry PrintzFeb 14, 2025</p>
-        </div>
-      </div>
-    </div>
-    <div className="container-ba">
+      {posts.map(post => <Post key={post._id} {...post} />)}
+    {/* <div className="container-ba">
       <img src="https://www.autoblog.com/.image/c_limit%2Ccs_srgb%2Cq_auto:good%2Cw_700/MjEwMjAyMzgyNDM1NDI3ODg3/2024dodgechargerdaytonascatpackshownindiamondblackexteriorcolor.webp"></img>
       <div className='container-baa'>
         <h1>Dodge hints at a sub-$30,000 sports car: Could it happen?</h1>
@@ -32,7 +33,7 @@ const Posts = () => {
           <p>Gabriel IonicaFeb 14, 2025</p>
         </div>
       </div>
-    </div>
+    </div> */}
   </div>
   )
 }
