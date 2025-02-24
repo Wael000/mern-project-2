@@ -14,6 +14,7 @@ const upload = multer({ dest: 'uploads/' });
 app.use(express.json());
 app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 app.use(cookieParser());
+app.use('/uploads', express.static('uploads'));
 
 app.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
@@ -59,19 +60,34 @@ app.post('/logout', (req, res) => {
 });
 
 app.post('/create', upload.single('file'), async (req, res) => {
-    const newPost = new Post({
-        title: req.body.title,
-        summary: req.body.summary,
-        content: req.body.content,
-        file: req.file.filename,
+    jwt.verify(req.cookies.token, 'secret', async (err, data) => {
+        if (err) {
+            res.status(400).json({ message: 'Not authorized' });
+        }
+        const newPost = new Post({
+            title: req.body.title,
+            summary: req.body.summary,
+            content: req.body.content,
+            file: req.file.filename,
+            author: data.id
+        });
+        await newPost.save();
+        res.status(201).json({ message: 'Post created' });
     });
-    await newPost.save();
-    res.status(201).json({ message: 'Post created' });
 });
 
 app.get('/posts', async (req, res) => {
-    const posts = await Post.find();
+    const posts = await Post.find()
+        .populate('author', "name")
+        .sort({ createdAt: -1 })
+        .limit(10);
     res.json(posts);
+});
+
+app.get('/post/:id', async (req, res) => {
+    const post = await Post.findById(req.params.id)
+        .populate('author', "name")
+    res.json(post);
 });
 
 mongoose.connect("mongodb+srv://Mzyxttt:hi1xAh7Q9IWP3Ytp@cluster0.3cz9i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")

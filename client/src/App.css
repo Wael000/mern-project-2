@@ -44,6 +44,11 @@ body {
   margin-bottom: 50px;
 }
 
+.container-ba a {
+  text-decoration: none;
+  color: inherit;
+}
+
 img {
   max-width: 50%;
   border-radius: 5px;
@@ -75,4 +80,21 @@ button {
   font-size: 1.2rem;
   cursor: pointer;
   margin-top: 15px;
+}
+
+.post-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 50px;
+}
+
+.post-detail-image {
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.post-detail-image img {
+  max-width: 100%;
+  border-radius: 5px;
 }

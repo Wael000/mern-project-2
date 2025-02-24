@@ -1,15 +1,20 @@
 import React from 'react'
 import { format } from 'date-fns'
+import { Link } from 'react-router-dom'
 
-const Post = ({title, summary, content, file, createdAt}) => {
+const Post = ({_id, title, summary, content, file, createdAt, author}) => {
   return (
     <div className="container-ba">
-    <img src="https://www.autoblog.com/.image/c_limit%2Ccs_srgb%2Cq_auto:good%2Cw_700/MjEyMDI3NTQ2MjM2MTY4MTY4/tesla-model-y-juniper.webp"></img>
+      <Link to={`/post/${_id}`}>
+        <img src={"http://localhost:3000/uploads/" + file}></img>
+      </Link>
     <div className='container-baa'>
-      <h1>{title}</h1>
+      <Link to={`/post/${_id}`}>
+        <h1>{title}</h1>
+      </Link>
       <div className="container-baaa">
         <p>{summary}</p>
-        <p>Larry PrintzFeb {format(new Date(createdAt), "MMM d yyyy HH:mm")}</p>
+        <p>{author.name} {format(new Date(createdAt), "MMM d yyyy HH:mm")}</p>
       </div>
     </div>
   </div>
