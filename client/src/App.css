@@ -98,3 +98,25 @@ button {
   max-width: 100%;
   border-radius: 5px;
 }
+
+.post-detail-description {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-detail-description a {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.post-detail-description a button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-top: 15px;
+}

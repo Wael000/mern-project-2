@@ -36,9 +36,8 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user && bcrypt.compareSync(password, user.password)) {
-        // res.json({ message: 'Login successful' });
         jwt.sign({ email, id: user._id}, 'secret', {}, (err, token) => {
-            res.cookie("token", token).json({message: "Login succesful"})
+            res.cookie("token", token).json({id: user._id, name: user.name});
         });
     } else {
         res.status(400).json({ message: 'Login failed' });
@@ -88,6 +87,26 @@ app.get('/post/:id', async (req, res) => {
     const post = await Post.findById(req.params.id)
         .populate('author', "name")
     res.json(post);
+});
+
+app.put('/edit/:id', upload.single('file'), async (req, res) => {
+    jwt.verify(req.cookies.token, 'secret', async (err, data) => {
+        if (err) {
+            res.status(400).json({ message: 'Not authorized' });
+        }
+        const post = await Post.findById(req.params.id);
+        if (data.id !== post.author.toString()) {
+            return res.status(400).json({ message: 'Not authorized' });
+        }
+        post.title = req.body.title;
+        post.summary = req.body.summary;
+        post.content = req.body.content;
+        if (req.file) {
+            post.file = req.file.filename;
+        }
+        await post.save();
+        res.json({ message: 'Post updated' });
+    });
 });
 
 mongoose.connect("mongodb+srv://Mzyxttt:hi1xAh7Q9IWP3Ytp@cluster0.3cz9i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
